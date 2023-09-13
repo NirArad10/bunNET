@@ -1,0 +1,37 @@
+{
+	"name": "bungate",
+	"description": "Developer-friendly library for building and managing powerful APIs with ease and efficiency",
+	"version": "0.0.1",
+	"author": "Nir Arad",
+	"license": "MIT",
+	"repository": {
+		"type": "git",
+		"url": "git+https://github.com/NirArad10/bungate.git"
+	},
+	"bugs": {
+		"url": "https://github.com/NirArad10/bungate/issues"
+	},
+	"homepage": "https://github.com/NirArad10/bungate#readme",
+	"devDependencies": {
+		"bun-types": "latest"
+	},
+	"peerDependencies": {
+		"typescript": "^5.0.0"
+	},
+	"keywords": [
+		"bungate",
+		"bun",
+		"framework",
+		"rest",
+		"restful",
+		"http",
+		"web",
+		"router",
+		"app",
+		"api"
+	],
+	"scripts": {
+		"start": "bun index.ts",
+		"test": "bun test"
+	}
+}
