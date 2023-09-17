@@ -31,7 +31,7 @@
 		"api"
 	],
 	"scripts": {
-		"start": "bun index.ts",
+		"start": "bun example/index.ts",
 		"test": "bun test"
 	}
 }

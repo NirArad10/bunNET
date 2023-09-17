@@ -1,1 +1,3 @@
-console.log("Hello via Bun!");
+import Bungate from './src';
+
+export default Bungate;
