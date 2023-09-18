@@ -1,1 +1,3 @@
-console.log("Hello via Bun!");
+import BunNET from './src';
+
+export default BunNET;
