@@ -1,3 +1,3 @@
-import Bungate from './src';
+import BunNET from './src';
 
-export default Bungate;
+export default BunNET;

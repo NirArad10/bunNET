@@ -1,6 +1,6 @@
-import Bungate from '..';
+import BunNET from '..';
 
-const app = new Bungate();
+const app = new BunNET();
 
 app.get('/', (req, res) => {
 	res.send('Get');

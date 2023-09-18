@@ -1,11 +1,11 @@
 import { serve } from 'bun';
 import { Router } from '../router/router';
-import { BungateResponse } from './response';
+import { BunNETResponse } from './response';
 import { fillStringTemplate, notFoundPage } from '../utils/utils';
 import { Handler } from '../utils/types';
-import { BungateRequest } from './request';
+import { BunNETRequest } from './request';
 
-export class Bungate {
+export class BunNET {
 	#router = new Router();
 
 	get(url: string, handler: Handler) {
@@ -61,10 +61,10 @@ export class Bungate {
 
 				if (handler === undefined) {
 					const notFoundHTML = fillStringTemplate(notFoundPage, { method: request.method, pathname: pathname });
-					return BungateResponse.pageNotFound(notFoundHTML);
+					return BunNETResponse.pageNotFound(notFoundHTML);
 				} else {
-					const req = new BungateRequest(request, pathname, searchParams);
-					const res = new BungateResponse();
+					const req = new BunNETRequest(request, pathname, searchParams);
+					const res = new BunNETResponse();
 
 					handler(req, res);
 

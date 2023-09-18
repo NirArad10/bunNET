@@ -1,9 +1,9 @@
-export class BungateResponse {
+export class BunNETResponse {
 	#response?: Response;
-	#options: ResponseInit = { headers: { 'X-Powered-By': 'Bungate' } };
+	#options: ResponseInit = { headers: { 'X-Powered-By': 'bunNET' } };
 
 	static pageNotFound(notFoundHTML: string) {
-		const headers = { 'X-Powered-By': 'Bungate', 'Content-Type': 'text/html' };
+		const headers = { 'X-Powered-By': 'bunNET', 'Content-Type': 'text/html' };
 
 		return new Response(notFoundHTML, { status: 404, headers });
 	}

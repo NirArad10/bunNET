@@ -1,3 +1,3 @@
-import { Bungate } from './server/server';
+import { BunNET } from './server/server';
 
-export default Bungate;
+export default BunNET;

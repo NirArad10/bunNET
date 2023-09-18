@@ -1,6 +1,6 @@
 import { parseUrlParameters } from '../utils/utils';
 
-export class BungateRequest extends Request {
+export class BunNETRequest extends Request {
 	pathname: string = '';
 	query: { [key: string]: any } = {};
 
