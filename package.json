@@ -1,17 +1,17 @@
 {
-	"name": "bungate",
+	"name": "bunnet",
 	"description": "Developer-friendly library for building and managing powerful APIs with ease and efficiency",
 	"version": "0.0.1",
 	"author": "Nir Arad",
 	"license": "MIT",
 	"repository": {
 		"type": "git",
-		"url": "git+https://github.com/NirArad10/bungate.git"
+		"url": "git+https://github.com/NirArad10/bunNET.git"
 	},
 	"bugs": {
-		"url": "https://github.com/NirArad10/bungate/issues"
+		"url": "https://github.com/NirArad10/bunNET/issues"
 	},
-	"homepage": "https://github.com/NirArad10/bungate#readme",
+	"homepage": "https://github.com/NirArad10/bunNET#readme",
 	"devDependencies": {
 		"bun-types": "latest"
 	},
