@@ -1,17 +1,18 @@
 {
-	"name": "bungate",
+	"name": "bunnet",
 	"description": "Developer-friendly library for building and managing powerful APIs with ease and efficiency",
 	"version": "0.0.1",
 	"author": "Nir Arad",
 	"license": "MIT",
+	"main": "index.ts",
 	"repository": {
 		"type": "git",
-		"url": "git+https://github.com/NirArad10/bungate.git"
+		"url": "https://github.com/NirArad10/bunNET"
 	},
 	"bugs": {
-		"url": "https://github.com/NirArad10/bungate/issues"
+		"url": "https://github.com/NirArad10/bunNET/issues"
 	},
-	"homepage": "https://github.com/NirArad10/bungate#readme",
+	"homepage": "https://github.com/NirArad10/bunNET#readme",
 	"devDependencies": {
 		"bun-types": "latest"
 	},
@@ -19,7 +20,7 @@
 		"typescript": "^5.0.0"
 	},
 	"keywords": [
-		"bungate",
+		"bunNET",
 		"bun",
 		"framework",
 		"rest",
@@ -31,7 +32,7 @@
 		"api"
 	],
 	"scripts": {
-		"start": "bun index.ts",
-		"test": "bun test"
+		"test": "bun test",
+		"example": "bun example/index.ts"
 	}
 }
