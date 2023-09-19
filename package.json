@@ -4,9 +4,10 @@
 	"version": "0.0.1",
 	"author": "Nir Arad",
 	"license": "MIT",
+	"main": "index.ts",
 	"repository": {
 		"type": "git",
-		"url": "git+https://github.com/NirArad10/bunNET.git"
+		"url": "https://github.com/NirArad10/bunNET"
 	},
 	"bugs": {
 		"url": "https://github.com/NirArad10/bunNET/issues"
@@ -31,7 +32,7 @@
 		"api"
 	],
 	"scripts": {
-		"start": "bun example/index.ts",
-		"test": "bun test"
+		"test": "bun test",
+		"example": "bun example/index.ts"
 	}
 }
