@@ -1,21 +1,25 @@
 export const notFoundPage =
-	'<!DOCTYPE html><html lang="en"><head><meta charset="utf-8" /><title>Error</title></head><body><pre>Cannot ${method} ${pathname}</pre></body></html>';
+  '<!DOCTYPE html><html lang="en"><head><meta charset="utf-8" /><title>Error</title></head><body><pre>Cannot ${method} ${pathname}</pre></body></html>';
 
-export const fillStringTemplate = (template: string, data: { [key: string]: string }) => {
-	return template.replace(/\${(.*?)}/g, (match, key) => data[key.trim()]);
+export const fillStringTemplate = (
+  template: string,
+  data: { [key: string]: string }
+) => {
+  return template.replace(/\${(.*?)}/g, (match, key) => data[key.trim()]);
 };
 
 export const parseUrlParameters = (searchParams: URLSearchParams) => {
-	const urlParams: { [key: string]: any } = {};
+  const uniqueParamKeys = [...new Set(searchParams.keys())];
 
-	for (const [key, value] of searchParams.entries()) {
-		if (urlParams[key] === undefined) urlParams[key] = value;
-		else {
-			if (!Array.isArray(urlParams[key])) urlParams[key] = [urlParams[key]];
+  return uniqueParamKeys.reduce(
+    (urlParams: { [key: string]: any }, currentParamKey) => {
+      urlParams[currentParamKey] = searchParams.getAll(currentParamKey);
 
-			urlParams[key].push(value);
-		}
-	}
+      if (urlParams[currentParamKey].length === 1)
+        urlParams[currentParamKey] = urlParams[currentParamKey][0];
 
-	return urlParams;
+      return urlParams;
+    },
+    {}
+  );
 };
