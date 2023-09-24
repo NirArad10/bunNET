@@ -8,40 +8,40 @@ import { BunNETRequest } from './request';
 export class BunNET {
 	#router = new Router();
 
-	get(url: string, handler: Handler) {
-		this.#router.get(url, handler);
+	get(urlPostfix: string, handler: Handler) {
+		this.#router.get(urlPostfix, handler);
 	}
 
-	head(url: string, handler: Handler) {
-		this.#router.head(url, handler);
+	head(urlPostfix: string, handler: Handler) {
+		this.#router.head(urlPostfix, handler);
 	}
 
-	post(url: string, handler: Handler) {
-		this.#router.post(url, handler);
+	post(urlPostfix: string, handler: Handler) {
+		this.#router.post(urlPostfix, handler);
 	}
 
-	put(url: string, handler: Handler) {
-		this.#router.put(url, handler);
+	put(urlPostfix: string, handler: Handler) {
+		this.#router.put(urlPostfix, handler);
 	}
 
-	delete(url: string, handler: Handler) {
-		this.#router.delete(url, handler);
+	delete(urlPostfix: string, handler: Handler) {
+		this.#router.delete(urlPostfix, handler);
 	}
 
-	connect(url: string, handler: Handler) {
-		this.#router.connect(url, handler);
+	connect(urlPostfix: string, handler: Handler) {
+		this.#router.connect(urlPostfix, handler);
 	}
 
-	options(url: string, handler: Handler) {
-		this.#router.options(url, handler);
+	options(urlPostfix: string, handler: Handler) {
+		this.#router.options(urlPostfix, handler);
 	}
 
-	trace(url: string, handler: Handler) {
-		this.#router.trace(url, handler);
+	trace(urlPostfix: string, handler: Handler) {
+		this.#router.trace(urlPostfix, handler);
 	}
 
-	patch(url: string, handler: Handler) {
-		this.#router.patch(url, handler);
+	patch(urlPostfix: string, handler: Handler) {
+		this.#router.patch(urlPostfix, handler);
 	}
 
 	listen(port: number, callback?: () => void) {
