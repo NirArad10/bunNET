@@ -1,3 +1,6 @@
+// Copyright (c) Node Fetch Team
+// toFormData was modified to using String instead of ReadableStream
+
 let s = 0;
 const S = {
 	START_BOUNDARY: s++,
@@ -332,7 +335,7 @@ const _fileName = (headerValue) => {
 	return filename;
 };
 
-export const toFormDataFromString = (bodyString, ct) => {
+export const toFormData = (bodyString, ct) => {
 	if (!/multipart/i.test(ct)) {
 		throw new TypeError('Content-Type is not multipart/form-data');
 	}

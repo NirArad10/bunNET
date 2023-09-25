@@ -1,4 +1,4 @@
-import { toFormDataFromString } from '../utils/multiPartParser';
+import { toFormData } from '../utils/multiPartParser';
 import { parseUrlParameters } from '../utils/utils';
 
 export class BunNETRequest {
@@ -52,6 +52,6 @@ export class BunNETRequest {
 			return formData;
 		}
 
-		return toFormDataFromString(this.#text, contentType);
+		return toFormData(this.#text, contentType);
 	}
 }
