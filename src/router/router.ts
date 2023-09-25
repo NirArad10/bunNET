@@ -3,53 +3,56 @@ import { Handler, requestMethodType } from '../utils/types';
 export class Router {
 	#requestsMap: Map<string, Map<string, Handler>> = new Map();
 
-	get(url: string, handler: Handler) {
-		this.#addRoute('GET', url, handler);
+	get(urlPostfix: string, handler: Handler) {
+		this.#addRoute('GET', urlPostfix, handler);
 	}
 
-	head(url: string, handler: Handler) {
-		this.#addRoute('HEAD', url, handler);
+	head(urlPostfix: string, handler: Handler) {
+		this.#addRoute('HEAD', urlPostfix, handler);
 	}
 
-	post(url: string, handler: Handler) {
-		this.#addRoute('POST', url, handler);
+	post(urlPostfix: string, handler: Handler) {
+		this.#addRoute('POST', urlPostfix, handler);
 	}
 
-	put(url: string, handler: Handler) {
-		this.#addRoute('PUT', url, handler);
+	put(urlPostfix: string, handler: Handler) {
+		this.#addRoute('PUT', urlPostfix, handler);
 	}
 
-	delete(url: string, handler: Handler) {
-		this.#addRoute('DELETE', url, handler);
+	delete(urlPostfix: string, handler: Handler) {
+		this.#addRoute('DELETE', urlPostfix, handler);
 	}
 
-	connect(url: string, handler: Handler) {
-		this.#addRoute('CONNECT', url, handler);
+	connect(urlPostfix: string, handler: Handler) {
+		this.#addRoute('CONNECT', urlPostfix, handler);
 	}
 
-	options(url: string, handler: Handler) {
-		this.#addRoute('OPTIONS', url, handler);
+	options(urlPostfix: string, handler: Handler) {
+		this.#addRoute('OPTIONS', urlPostfix, handler);
 	}
 
-	trace(url: string, handler: Handler) {
-		this.#addRoute('TRACE', url, handler);
+	trace(urlPostfix: string, handler: Handler) {
+		this.#addRoute('TRACE', urlPostfix, handler);
 	}
 
-	patch(url: string, handler: Handler) {
-		this.#addRoute('PATCH', url, handler);
+	patch(urlPostfix: string, handler: Handler) {
+		this.#addRoute('PATCH', urlPostfix, handler);
 	}
 
-	#addRoute(method: requestMethodType, url: string, handlerFunction: Handler) {
+	#addRoute(method: requestMethodType, urlPostfix: string, handlerFunction: Handler) {
 		if (!this.#requestsMap.has(method)) {
 			this.#requestsMap.set(method, new Map());
 		}
 
+		if (!urlPostfix.startsWith('/')) urlPostfix = '/' + urlPostfix;
+		if (!urlPostfix.endsWith('/')) urlPostfix += '/';
+
 		const methodMap = this.#requestsMap.get(method);
-		methodMap?.set(url, handlerFunction);
+		methodMap?.set(urlPostfix, handlerFunction);
 	}
 
 	routeToHandler(urlPostfix: string, method: string): Handler | undefined {
-		urlPostfix = urlPostfix !== '/' && urlPostfix !== '//' ? urlPostfix.replace(/\/$/, '') : urlPostfix;
+		if (!urlPostfix.endsWith('/')) urlPostfix += '/';
 		const methodMap = this.#requestsMap.get(method);
 
 		if (methodMap?.has(urlPostfix)) {

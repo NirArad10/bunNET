@@ -1,7 +1,7 @@
 {
 	"name": "bunnet",
 	"description": "Developer-friendly library for building and managing powerful APIs with ease and efficiency",
-	"version": "0.0.1",
+	"version": "0.0.2",
 	"author": "Nir Arad",
 	"license": "MIT",
 	"main": "index.ts",
