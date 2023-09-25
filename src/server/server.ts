@@ -51,11 +51,12 @@ export class BunNET {
 
 	#startServer(port: number) {
 		const router = this.#router;
+		const createRequest = this.#createRequest;
 
 		return serve({
 			port,
-			fetch(request, server) {
-				const { pathname, searchParams } = new URL(request.url);
+			async fetch(request, server) {
+				const { pathname, search, searchParams } = new URL(request.url);
 
 				const handler = router.routeToHandler(pathname, request.method);
 
@@ -63,7 +64,7 @@ export class BunNET {
 					const notFoundHTML = fillStringTemplate(notFoundPage, { method: request.method, pathname: pathname });
 					return BunNETResponse.pageNotFound(notFoundHTML);
 				} else {
-					const req = new BunNETRequest(request, pathname, searchParams);
+					const req = await createRequest(request, pathname + search, searchParams);
 					const res = new BunNETResponse();
 
 					handler(req, res);
@@ -72,5 +73,9 @@ export class BunNET {
 				}
 			}
 		});
+	}
+
+	async #createRequest(request: Request, urlPostfix: string, searchParams: URLSearchParams) {
+		return new BunNETRequest(await request.text(), request.headers, urlPostfix, searchParams);
 	}
 }
