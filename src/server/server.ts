@@ -45,15 +45,13 @@ export class BunNET {
 	}
 
 	listen(port: number, callback?: () => void) {
-		callback?.call(null);
-		return this.#startServer(port);
+		return this.#startServer(port, callback);
 	}
 
-	#startServer(port: number) {
+	#startServer(port: number, callback?: () => void) {
 		const router = this.#router;
-		const createRequest = this.#createRequest;
 
-		return serve({
+		const server = serve({
 			port,
 			async fetch(request, server) {
 				const { pathname, search, searchParams } = new URL(request.url);
@@ -64,7 +62,20 @@ export class BunNET {
 					const notFoundHTML = fillStringTemplate(notFoundPage, { method: request.method, pathname: pathname });
 					return BunNETResponse.pageNotFound(notFoundHTML);
 				} else {
-					const req = await createRequest(request, pathname + search, searchParams);
+					let body;
+					const contentType = request.headers.get('Content-type');
+
+					if (contentType === 'application/x-www-form-urlencoded' || contentType?.startsWith('multipart/form-data')) {
+						body = await request.formData();
+					} else {
+						body = await request.text();
+
+						try {
+							body = JSON.parse(body);
+						} catch {}
+					}
+
+					const req = new BunNETRequest(body, request.headers, pathname + search, searchParams);
 					const res = new BunNETResponse();
 
 					handler(req, res);
@@ -73,9 +84,7 @@ export class BunNET {
 				}
 			}
 		});
-	}
-
-	async #createRequest(request: Request, urlPostfix: string, searchParams: URLSearchParams) {
-		return new BunNETRequest(await request.text(), request.headers, urlPostfix, searchParams);
+		callback?.call(null);
+		return server;
 	}
 }
