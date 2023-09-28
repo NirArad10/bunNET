@@ -1,49 +1,49 @@
 import { afterAll, beforeAll, describe, expect, test } from 'bun:test';
-import BunNET from '..';
+import bunNET from '..';
 import { fillStringTemplate, notFoundPage } from '../src/utils/utils';
 import { Server } from 'bun';
 
-const app = new BunNET();
+const app = new bunNET();
 
-app.get('/', (req, res) => {
+app.get('/GET', (req, res) => {
 	res.json(req.query);
 });
 
-app.head('/', (req, res) => {
+app.head('/HEAD', (_, res) => {
 	const headers = { method: 'HEAD' };
 
 	res.headers(headers).send(null);
 });
 
-app.post('/', (req, res) => {
+app.post('/POST', (req, res) => {
 	res.json(req.query);
 });
 
-app.put('/', (req, res) => {
+app.put('/PUT', (req, res) => {
 	res.json(req.query);
 });
 
-app.delete('/', (req, res) => {
+app.delete('/DELETE', (req, res) => {
 	res.json(req.query);
 });
 
-app.connect('/', (req, res) => {
+app.connect('/CONNECT', (req, res) => {
 	res.json(req.query);
 });
 
-app.options('/', (req, res) => {
+app.options('/OPTIONS', (_, res) => {
 	const headers = { method: 'OPTIONS' };
 
 	res.headers(headers).send(null);
 });
 
-app.trace('/', (req, res) => {
+app.trace('/TRACE', (_, res) => {
 	const headers = { method: 'TRACE' };
 
 	res.headers(headers).send(null);
 });
 
-app.patch('/', (req, res) => {
+app.patch('/PATCH', (req, res) => {
 	res.json(req.query);
 });
 
@@ -57,8 +57,8 @@ describe('bunNET http server', () => {
 	const methodsWithoutResponseBody = ['HEAD', 'OPTIONS', 'TRACE'];
 	const pathname = '/test';
 
-	const urlParamsString = '?server=bunNET&protocol=TCP&method=';
-	const urlParamsDict = { server: 'bunNET', protocol: 'TCP', method: '' };
+	const urlParamsString = '?server=http&server=bunNET&protocol=TCP&method=';
+	const urlParamsDict = { server: ['http', 'bunNET'], protocol: 'TCP', method: '' };
 
 	beforeAll(() => {
 		server = app.listen(PORT);
@@ -70,57 +70,41 @@ describe('bunNET http server', () => {
 
 	methodsWithResponseBody.forEach((method) => {
 		test(method, async () => {
-			const url = BASE_URL + PORT + urlParamsString + method;
+			const url = BASE_URL + PORT + `/${method}` + urlParamsString + method;
 			urlParamsDict.method = method;
 
-			try {
-				const res = await fetch(url, { method });
+			const res = await fetch(url, { method });
 
-				expect(res.status).toBe(200);
-				expect(res.headers.get('X-Powered-By')).toBe('bunNET');
-				expect(await res.json()).toEqual(urlParamsDict);
-			} catch (e) {
-				throw e;
-			}
+			expect(res.status).toBe(200);
+			expect(res.headers.get('X-Powered-By')).toBe('bunNET');
+			expect(await res.json()).toEqual(urlParamsDict);
 		});
 
 		test(method + ' NOT FOUND', async () => {
-			try {
-				const res = await fetch(BASE_URL + PORT + pathname, { method });
+			const res = await fetch(BASE_URL + PORT + pathname, { method });
 
-				expect(res.status).toBe(404);
-				expect(res.headers.get('X-Powered-By')).toBe('bunNET');
-				expect(await res.text()).toBe(fillStringTemplate(notFoundPage, { method, pathname }));
-			} catch (e) {
-				throw e;
-			}
+			expect(res.status).toBe(404);
+			expect(res.headers.get('X-Powered-By')).toBe('bunNET');
+			expect(await res.text()).toBe(fillStringTemplate(notFoundPage, { method, pathname }));
 		});
 	});
 
 	methodsWithoutResponseBody.forEach((method) => {
 		test(method, async () => {
-			try {
-				const res = await fetch(BASE_URL + PORT, { method });
+			const res = await fetch(BASE_URL + PORT + `/${method}`, { method });
 
-				expect(res.status).toBe(200);
-				expect(res.headers.get('X-Powered-By')).toBe('bunNET');
-				expect(res.headers.get('method')).toBe(method);
-				expect(await res.text()).toBe('');
-			} catch (e) {
-				throw e;
-			}
+			expect(res.status).toBe(200);
+			expect(res.headers.get('X-Powered-By')).toBe('bunNET');
+			expect(res.headers.get('method')).toBe(method);
+			expect(await res.text()).toBe('');
 		});
 
 		test(method + ' NOT FOUND', async () => {
-			try {
-				const res = await fetch(BASE_URL + PORT + pathname, { method });
+			const res = await fetch(BASE_URL + PORT + pathname, { method });
 
-				expect(res.status).toBe(404);
-				expect(res.headers.get('X-Powered-By')).toBe('bunNET');
-				expect(await res.text()).toBe('');
-			} catch (e) {
-				throw e;
-			}
+			expect(res.status).toBe(404);
+			expect(res.headers.get('X-Powered-By')).toBe('bunNET');
+			expect(await res.text()).toBe('');
 		});
 	});
 });
