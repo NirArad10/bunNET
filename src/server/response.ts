@@ -1,9 +1,13 @@
+import { file } from 'bun';
+import { fillStringTemplate, notFoundPage } from '../utils/utils';
+
 export class BunNETResponse {
 	#response?: Response;
 	#options: ResponseInit = { headers: { 'X-Powered-By': 'bunNET' } };
 
-	static pageNotFound(notFoundHTML: string) {
+	static pageNotFound(method: string, pathname: string) {
 		const headers = { 'X-Powered-By': 'bunNET', 'Content-Type': 'text/html' };
+		const notFoundHTML = fillStringTemplate(notFoundPage, { method, pathname });
 
 		return new Response(notFoundHTML, { status: 404, headers });
 	}
@@ -47,7 +51,11 @@ export class BunNETResponse {
 		this.#response = Response.json(body, this.#options);
 	}
 
+	sendFile(filePath: string, options?: BlobPropertyBag) {
+		this.#response = new Response(file(filePath, options), this.#options);
+	}
+
 	getResponse() {
-		return this.#response ? this.#response : new Response();
+		return this.#response || new Response();
 	}
 }
