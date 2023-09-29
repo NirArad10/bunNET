@@ -1,4 +1,5 @@
 import { Handler, requestMethodType } from '../utils/types';
+import { normalizeUrlPath } from '../utils/utils';
 
 export class Router {
 	#requestsMap: Map<string, Map<string, Handler>> = new Map();
@@ -40,28 +41,19 @@ export class Router {
 	}
 
 	#addRoute(method: requestMethodType, urlPostfix: string, handlerFunction: Handler) {
-		if (!this.#requestsMap.has(method)) {
-			this.#requestsMap.set(method, new Map());
-		}
-
-		if (!urlPostfix.startsWith('/')) urlPostfix = '/' + urlPostfix;
-		if (!urlPostfix.endsWith('/')) urlPostfix += '/';
+		if (!this.#requestsMap.has(method)) this.#requestsMap.set(method, new Map());
 
 		const methodMap = this.#requestsMap.get(method);
+		urlPostfix = normalizeUrlPath(urlPostfix);
+
 		methodMap?.set(urlPostfix, handlerFunction);
 	}
 
 	routeToHandler(urlPostfix: string, method: string): Handler | undefined {
-		if (!urlPostfix.endsWith('/')) urlPostfix += '/';
 		const methodMap = this.#requestsMap.get(method);
+		urlPostfix = normalizeUrlPath(urlPostfix);
 
-		if (methodMap?.has(urlPostfix)) {
-			const handler = methodMap.get(urlPostfix);
-
-			if (handler?.call) {
-				return handler;
-			}
-		}
-		return undefined;
+		const handler = methodMap?.get(urlPostfix);
+		return handler;
 	}
 }

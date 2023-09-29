@@ -3,4 +3,4 @@ import { BunNETResponse } from '../server/response';
 
 export type requestMethodType = 'GET' | 'HEAD' | 'POST' | 'PUT' | 'DELETE' | 'CONNECT' | 'OPTIONS' | 'TRACE' | 'PATCH';
 
-export type Handler = (req: BunNETRequest, res: BunNETResponse) => void | Promise<any>;
+export type Handler = (req: BunNETRequest, res: BunNETResponse) => void;

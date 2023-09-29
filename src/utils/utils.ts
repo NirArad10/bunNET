@@ -5,15 +5,22 @@ export const fillStringTemplate = (template: string, data: { [key: string]: stri
 	return template.replace(/\${(.*?)}/g, (match, key) => data[key.trim()]);
 };
 
+export const normalizeUrlPath = (path: string): string => {
+	if (!path.startsWith('/')) path = '/' + path;
+	if (path.endsWith('/')) path = path.slice(0, -1);
+
+	return path;
+};
+
 export const parseUrlParameters = (searchParams: URLSearchParams) => {
-	const urlParams: { [key: string]: any } = {};
+	const urlParams: { [key: string]: string | string[] } = {};
 
 	for (const [key, value] of searchParams.entries()) {
 		if (urlParams[key] === undefined) urlParams[key] = value;
 		else {
-			if (!Array.isArray(urlParams[key])) urlParams[key] = [urlParams[key]];
+			if (!Array.isArray(urlParams[key])) urlParams[key] = [urlParams[key]] as string[];
 
-			urlParams[key].push(value);
+			(urlParams[key] as string[]).push(value);
 		}
 	}
 

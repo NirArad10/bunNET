@@ -1,8 +1,7 @@
-import { serve } from 'bun';
+import { readableStreamToFormData, readableStreamToJSON, readableStreamToText, serve } from 'bun';
 import { Router } from '../router/router';
-import { BunNETResponse } from './response';
-import { fillStringTemplate, notFoundPage } from '../utils/utils';
 import { Handler } from '../utils/types';
+import { BunNETResponse } from './response';
 import { BunNETRequest } from './request';
 
 export class BunNET {
@@ -50,41 +49,46 @@ export class BunNET {
 
 	#startServer(port: number, callback?: () => void) {
 		const router = this.#router;
+		const parseRequestBody = this.#parseRequestBody;
 
 		const server = serve({
 			port,
 			async fetch(request, server) {
 				const { pathname, search, searchParams } = new URL(request.url);
-
 				const handler = router.routeToHandler(pathname, request.method);
 
-				if (handler === undefined) {
-					const notFoundHTML = fillStringTemplate(notFoundPage, { method: request.method, pathname: pathname });
-					return BunNETResponse.pageNotFound(notFoundHTML);
-				} else {
-					let body;
-					const contentType = request.headers.get('Content-type');
+				if (handler === undefined) return BunNETResponse.pageNotFound(request.method, pathname);
 
-					if (contentType === 'application/x-www-form-urlencoded' || contentType?.startsWith('multipart/form-data')) {
-						body = await request.formData();
-					} else {
-						body = await request.text();
+				const body = request.body ? await parseRequestBody(request.body, request.headers) : null;
 
-						try {
-							body = JSON.parse(body);
-						} catch {}
-					}
+				const req = new BunNETRequest(body, request.headers, pathname + search, searchParams);
+				const res = new BunNETResponse();
 
-					const req = new BunNETRequest(body, request.headers, pathname + search, searchParams);
-					const res = new BunNETResponse();
+				handler(req, res);
 
-					handler(req, res);
-
-					return res.getResponse();
-				}
+				return res.getResponse();
 			}
 		});
-		callback?.call(null);
+
+		callback?.();
+
 		return server;
+	}
+
+	async #parseRequestBody(requestBody: ReadableStream<any>, headers: Headers) {
+		const contentType = headers.get('Content-type');
+
+		if (contentType === 'application/json') return readableStreamToJSON(requestBody);
+
+		if (contentType === 'application/x-www-form-urlencoded') return Bun.readableStreamToFormData(requestBody);
+
+		if (contentType?.startsWith('multipart/form-data')) {
+			const boundaryMatch = /boundary=(.*)/.exec(contentType);
+
+			if (boundaryMatch) return readableStreamToFormData(requestBody, boundaryMatch[1]);
+			else throw new Error('Boundary not found in multipart/form-data Content-type');
+		}
+
+		return readableStreamToText(requestBody);
 	}
 }
