@@ -1,9 +1,9 @@
 import { afterAll, beforeAll, describe, expect, test } from 'bun:test';
-import BunNET from '..';
+import bunnet from '..';
 import { fillStringTemplate, notFoundPage } from '../src/utils/utils';
 import { Server } from 'bun';
 
-const app = new BunNET();
+const app = bunnet();
 
 app.get('/GET', (req, res) => {
 	res.json(req.query);
