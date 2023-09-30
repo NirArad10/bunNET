@@ -1,8 +1,8 @@
-import { readableStreamToFormData, readableStreamToJSON, readableStreamToText, serve } from 'bun';
 import { Router } from '../router/router';
 import { Handler } from '../utils/types';
 import { BunNETResponse } from './response';
 import { BunNETRequest } from './request';
+import { serve } from 'bun';
 import { RouteNotFoundError } from '../utils/errors';
 
 export class BunNET {
@@ -50,19 +50,17 @@ export class BunNET {
 
 	#startServer(port: number, callback?: () => void) {
 		const router = this.#router;
-		const parseRequestBody = this.#parseRequestBody;
 
 		const server = serve({
 			port,
-			async fetch(request, server) {
+			async fetch(request, _) {
 				const { pathname, search, searchParams } = new URL(request.url);
 				const { method, body, headers } = request;
 
 				try {
 					const handler = router.routeToHandler(pathname, method);
-					const requestBody = body ? await parseRequestBody(body, headers) : null;
 
-					const req = new BunNETRequest(requestBody, headers, pathname + search, searchParams);
+					const req = new BunNETRequest(body, headers, pathname + search, searchParams);
 					const res = new BunNETResponse();
 
 					await handler(req, res);
@@ -79,22 +77,5 @@ export class BunNET {
 		callback?.();
 
 		return server;
-	}
-
-	async #parseRequestBody(requestBody: ReadableStream<any>, headers: Headers) {
-		const contentType = headers.get('Content-type');
-
-		if (contentType === 'application/json') return readableStreamToJSON(requestBody);
-
-		if (contentType === 'application/x-www-form-urlencoded') return Bun.readableStreamToFormData(requestBody);
-
-		if (contentType?.startsWith('multipart/form-data')) {
-			const boundaryMatch = /boundary=(.*)/.exec(contentType);
-
-			if (boundaryMatch) return readableStreamToFormData(requestBody, boundaryMatch[1]);
-			else throw new Error('Boundary not found in multipart/form-data Content-type');
-		}
-
-		return readableStreamToText(requestBody);
 	}
 }

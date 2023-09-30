@@ -1,3 +1,3 @@
-import BunNET from './src';
+import bunnet from './src';
 
-export default BunNET;
+export default bunnet;

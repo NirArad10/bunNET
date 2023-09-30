@@ -1,9 +1,11 @@
 import { RouteNotFoundError } from '../utils/errors';
-import { Handler, requestMethodType } from '../utils/types';
+import { Handler, RequestMethodType } from '../utils/types';
 import { normalizeUrlPath } from '../utils/utils';
 
+type RequestsMap = Map<string, Map<string, Handler>>;
+
 export class Router {
-	#requestsMap: Map<string, Map<string, Handler>> = new Map();
+	#requestsMap: RequestsMap = new Map();
 
 	get(urlPostfix: string, handler: Handler) {
 		this.#addRoute('GET', urlPostfix, handler);
@@ -41,7 +43,7 @@ export class Router {
 		this.#addRoute('PATCH', urlPostfix, handler);
 	}
 
-	#addRoute(method: requestMethodType, urlPostfix: string, handlerFunction: Handler) {
+	#addRoute(method: RequestMethodType, urlPostfix: string, handlerFunction: Handler) {
 		if (!this.#requestsMap.has(method)) this.#requestsMap.set(method, new Map());
 
 		const methodMap = this.#requestsMap.get(method);
