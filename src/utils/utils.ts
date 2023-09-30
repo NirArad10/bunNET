@@ -1,3 +1,5 @@
+import { urlParamsObject } from './types';
+
 export const notFoundPage =
 	'<!DOCTYPE html><html lang="en"><head><meta charset="utf-8" /><title>Error</title></head><body><pre>Cannot ${method} ${pathname}</pre></body></html>';
 
@@ -6,14 +8,14 @@ export const fillStringTemplate = (template: string, data: { [key: string]: stri
 };
 
 export const normalizeUrlPath = (path: string): string => {
-	if (!path.startsWith('/')) path = '/' + path;
-	if (path.endsWith('/')) path = path.slice(0, -1);
+	if (path[0] !== '/') path = '/' + path;
+	if (path[path.length - 1] === '/') path = path.slice(0, -1);
 
 	return path;
 };
 
 export const parseUrlParameters = (searchParams: URLSearchParams) => {
-	const urlParams: { [key: string]: string | string[] } = {};
+	const urlParams: urlParamsObject = {};
 
 	for (const [key, value] of searchParams.entries()) {
 		if (urlParams[key] === undefined) urlParams[key] = value;
