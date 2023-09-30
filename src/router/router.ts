@@ -1,3 +1,4 @@
+import { RouteNotFoundError } from '../utils/errors';
 import { Handler, requestMethodType } from '../utils/types';
 import { normalizeUrlPath } from '../utils/utils';
 
@@ -49,11 +50,16 @@ export class Router {
 		methodMap?.set(urlPostfix, handlerFunction);
 	}
 
-	routeToHandler(urlPostfix: string, method: string): Handler | undefined {
+	routeToHandler(urlPostfix: string, method: string): Handler {
 		const methodMap = this.#requestsMap.get(method);
-		urlPostfix = normalizeUrlPath(urlPostfix);
 
-		const handler = methodMap?.get(urlPostfix);
-		return handler;
+		if (!methodMap) throw new RouteNotFoundError();
+
+		urlPostfix = normalizeUrlPath(urlPostfix);
+		const handler = methodMap.get(urlPostfix);
+
+		if (handler) return handler;
+
+		throw new RouteNotFoundError();
 	}
 }
