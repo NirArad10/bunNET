@@ -7,7 +7,7 @@ Developer-friendly library for building and managing powerful APIs with ease and
 You can install `bunNET` via npm by running the following command:
 
 ```bash
-npm install bunnet
+bun install bunnet
 ```
 
 ## Usage
