@@ -1,3 +1,15 @@
 import { BunNET } from './server/server';
 
-export default BunNET;
+class BunNETSingleton {
+	static #instance: BunNET;
+
+	static getInstance(): BunNET {
+		if (!BunNETSingleton.#instance) {
+			BunNETSingleton.#instance = new BunNET();
+		}
+
+		return BunNETSingleton.#instance;
+	}
+}
+
+export default BunNETSingleton.getInstance;

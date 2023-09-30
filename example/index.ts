@@ -1,6 +1,6 @@
-import BunNET from '..';
+import bunnet from '..';
 
-const app = new BunNET();
+const app = bunnet();
 
 app.get('/', (req, res) => {
 	res.send('Get');
