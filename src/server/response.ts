@@ -1,6 +1,8 @@
 import { file } from 'bun';
 import { fillStringTemplate, notFoundPage } from '../utils/utils';
 
+type ResponseBody = ReadableStream | BlobPart | BlobPart[] | FormData | URLSearchParams | null;
+
 export class BunNETResponse {
 	#response?: Response;
 	#options: ResponseInit = { headers: { 'X-Powered-By': 'bunNET' } };
@@ -43,11 +45,11 @@ export class BunNETResponse {
 		return this.#options;
 	}
 
-	send(body: ReadableStream | BlobPart | BlobPart[] | FormData | URLSearchParams | null) {
+	send(body: ResponseBody) {
 		this.#response = new Response(body, this.#options);
 	}
 
-	json(body: any) {
+	json(body: object) {
 		this.#response = Response.json(body, this.#options);
 	}
 
