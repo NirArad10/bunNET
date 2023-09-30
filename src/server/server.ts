@@ -3,6 +3,7 @@ import { Router } from '../router/router';
 import { Handler } from '../utils/types';
 import { BunNETResponse } from './response';
 import { BunNETRequest } from './request';
+import { RouteNotFoundError } from '../utils/errors';
 
 export class BunNET {
 	#router = new Router();
@@ -55,18 +56,23 @@ export class BunNET {
 			port,
 			async fetch(request, server) {
 				const { pathname, search, searchParams } = new URL(request.url);
-				const handler = router.routeToHandler(pathname, request.method);
+				const { method, body, headers } = request;
 
-				if (handler === undefined) return BunNETResponse.pageNotFound(request.method, pathname);
+				try {
+					const handler = router.routeToHandler(pathname, method);
+					const requestBody = body ? await parseRequestBody(body, headers) : null;
 
-				const body = request.body ? await parseRequestBody(request.body, request.headers) : null;
+					const req = new BunNETRequest(requestBody, headers, pathname + search, searchParams);
+					const res = new BunNETResponse();
 
-				const req = new BunNETRequest(body, request.headers, pathname + search, searchParams);
-				const res = new BunNETResponse();
+					await handler(req, res);
 
-				handler(req, res);
+					return res.getResponse();
+				} catch (err) {
+					if (err instanceof RouteNotFoundError) return BunNETResponse.pageNotFound(method, pathname);
 
-				return res.getResponse();
+					throw err;
+				}
 			}
 		});
 
