@@ -2,8 +2,10 @@ import bunnet from '..';
 
 const app = bunnet();
 
-app.get('/', (req, res) => {
-	res.send('Get');
+app.get('/:server', (req, res) => {
+	console.log(req.params.server);
+
+	res.sendFile('Get');
 });
 
 app.head('/', (req, res) => {
@@ -12,15 +14,21 @@ app.head('/', (req, res) => {
 	res.headers(headers).send(null);
 });
 
-app.post('/', (req, res) => {
-	res.send('Post');
+app.post('/', async (req, res) => {
+	const jsonBody = await req.json();
+
+	res.json(jsonBody);
 });
 
-app.put('/', (req, res) => {
+app.put('/', async (req, res) => {
+	console.log(await req.formData());
+
 	res.send('Put');
 });
 
 app.delete('/', (req, res) => {
+	console.log(req.query);
+
 	res.send('Delete');
 });
 
