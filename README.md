@@ -1,5 +1,8 @@
 # bunNET
-
+![npm](https://img.shields.io/npm/v/bunnet)
+![npm](https://img.shields.io/npm/dt/bunnet)
+![npm](https://img.shields.io/npm/l/bunnet)
+[![CodeFactor](https://www.codefactor.io/repository/github/NirArad10/bunNET/badge)](https://www.codefactor.io/repository/github/NirArad10/bunNET)\
 Developer-friendly library for building and managing powerful APIs with ease and efficiency
 
 ## Installation
