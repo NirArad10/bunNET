@@ -1,12 +1,26 @@
-import { Router } from '../router/router';
-import { Handler } from '../utils/types';
-import { BunNETResponse } from './response';
-import { BunNETRequest } from './request';
 import { serve } from 'bun';
-import { RouteNotFoundError } from '../utils/errors';
+import { BunNETRequest } from './request';
+import { BunNETResponse } from './response';
+import { Router } from './router';
+import { RouteNotFoundError } from './utils/errors';
+import { Handler, RequestMethodType } from './utils/types';
+import { normalizeUrlPath } from './utils/utils';
 
-export class BunNET {
+export const bunnet: () => BunNET = () => {
+	return BunNET.instance;
+};
+
+class BunNET {
+	static #instance: BunNET;
 	#router = new Router();
+
+	constructor() {
+		BunNET.#instance = this;
+	}
+
+	static get instance() {
+		return BunNET.#instance ?? (BunNET.#instance = new BunNET());
+	}
 
 	get(urlPostfix: string, handler: Handler) {
 		this.#router.get(urlPostfix, handler);
@@ -53,23 +67,30 @@ export class BunNET {
 
 		const server = serve({
 			port,
-			async fetch(request, _) {
+			async fetch(request) {
 				const { pathname, search, searchParams } = new URL(request.url);
 				const { method, body, headers } = request;
+				const normalizedRoute = normalizeUrlPath(pathname);
+
+				let currentRoute = normalizedRoute;
 
 				try {
-					const handler = router.routeToHandler(pathname, method);
+					const { route, params, handler } = router.routeToHandler(normalizedRoute, method);
+					currentRoute = route;
 
-					const req = new BunNETRequest(body, headers, pathname + search, searchParams);
+					const req = new BunNETRequest(body, headers, normalizedRoute + search, searchParams, params, route);
 					const res = new BunNETResponse();
 
 					await handler(req, res);
 
 					return res.getResponse();
 				} catch (err) {
-					if (err instanceof RouteNotFoundError) return BunNETResponse.pageNotFound(method, pathname);
+					if (err instanceof RouteNotFoundError)
+						return BunNETResponse.pageNotFound(method as RequestMethodType, pathname);
 
-					throw err;
+					if (err instanceof Error) console.error(err, '\x1b[31m%s\x1b[0m - /%s failed', method, currentRoute);
+
+					return BunNETResponse.serverError();
 				}
 			}
 		});

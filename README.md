@@ -14,7 +14,7 @@ bun install bunnet
 
 To use `bunNET` in your project, follow these steps:
 
-1. Import the bunnet singleton into your project and create an class to set up your HTTP server:
+1. Import the `bunnet` singleton into your project and create a class to set up your HTTP server:
 
 ```js
 import bunnet from 'bunnet';
@@ -34,6 +34,17 @@ app.post('/api/resource', (req, res) => {
 });
 
 // Add more routes as needed...
+```
+
+### Dynamic Routes
+
+You can define dynamic routes using `:` in your route paths. For example:
+
+```js
+app.get('/api/user/:id', (req, res) => {
+	const userId = req.params.id;
+	// Your logic to handle requests with a dynamic user ID
+});
 ```
 
 3. **Request Functions**

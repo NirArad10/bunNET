@@ -1,21 +1,17 @@
-import { urlParamsObject } from './types';
+import { RequestMethodType, UrlParamsObject } from './types';
 
-export const notFoundPage =
-	'<!DOCTYPE html><html lang="en"><head><meta charset="utf-8" /><title>Error</title></head><body><pre>Cannot ${method} ${pathname}</pre></body></html>';
+const consecutiveSlashesPattern = /\/+/g;
+const leadingOrTrailingSlashPattern = /^\/|\/$/g;
 
-export const fillStringTemplate = (template: string, data: { [key: string]: string }) => {
-	return template.replace(/\${(.*?)}/g, (match, key) => data[key.trim()]);
-};
+export const notFoundPage = (method: RequestMethodType, pathname: string) =>
+	`<!DOCTYPE html><html lang="en"><head><meta charset="utf-8" /><title>Error</title></head><body><pre>Cannot ${method} ${pathname}</pre></body></html>`;
 
 export const normalizeUrlPath = (path: string): string => {
-	if (path[0] !== '/') path = '/' + path;
-	if (path[path.length - 1] === '/') path = path.slice(0, -1);
-
-	return path;
+	return path.replace(consecutiveSlashesPattern, '/').replace(leadingOrTrailingSlashPattern, '');
 };
 
 export const parseUrlParameters = (searchParams: URLSearchParams) => {
-	const urlParams: urlParamsObject = {};
+	const urlParams: UrlParamsObject = {};
 
 	for (const [key, value] of searchParams.entries()) {
 		if (urlParams[key] === undefined) urlParams[key] = value;
