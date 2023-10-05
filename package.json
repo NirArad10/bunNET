@@ -1,7 +1,7 @@
 {
 	"name": "bunnet",
 	"description": "Developer-friendly library for building and managing powerful APIs with ease and efficiency",
-	"version": "0.0.4",
+	"version": "0.0.5",
 	"author": "Nir Arad",
 	"license": "MIT",
 	"main": "index.ts",
@@ -30,6 +30,12 @@
 		"router",
 		"app",
 		"api"
+	],
+	"files": [
+		"LICENSE",
+		"README.md",
+		"src/",
+		"index.ts"
 	],
 	"scripts": {
 		"test": "bun test",
