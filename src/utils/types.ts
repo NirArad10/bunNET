@@ -1,8 +1,10 @@
-import { BunNETRequest } from '../server/request';
-import { BunNETResponse } from '../server/response';
+import { BunNETRequest } from '../request';
+import { BunNETResponse } from '../response';
 
 export type RequestMethodType = 'GET' | 'HEAD' | 'POST' | 'PUT' | 'DELETE' | 'CONNECT' | 'OPTIONS' | 'TRACE' | 'PATCH';
 
 export type Handler = (req: BunNETRequest, res: BunNETResponse) => void | Promise<void>;
 
-export type urlParamsObject = { [key: string]: string | string[] };
+export type UrlParamsObject = { [key: string]: string | string[] };
+
+export type UrlDynamicParams = { [key: string]: string };

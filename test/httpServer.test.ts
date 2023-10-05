@@ -1,7 +1,8 @@
 import { afterAll, beforeAll, describe, expect, test } from 'bun:test';
 import bunnet from '..';
-import { fillStringTemplate, notFoundPage } from '../src/utils/utils';
+import { notFoundPage } from '../src/utils/utils';
 import { Server } from 'bun';
+import { RequestMethodType } from '../src/utils/types';
 
 const app = bunnet();
 
@@ -53,8 +54,8 @@ const PORT = 3000;
 describe('bunNET http server', () => {
 	let server: Server | undefined;
 
-	const methodsWithResponseBody = ['GET', 'POST', 'PUT', 'DELETE', 'CONNECT', 'PATCH'];
-	const methodsWithoutResponseBody = ['HEAD', 'OPTIONS', 'TRACE'];
+	const methodsWithResponseBody: RequestMethodType[] = ['GET', 'POST', 'PUT', 'DELETE', 'CONNECT', 'PATCH'];
+	const methodsWithoutResponseBody: RequestMethodType[] = ['HEAD', 'OPTIONS', 'TRACE'];
 	const pathname = '/test';
 
 	const urlParamsString = '?server=http&server=bunNET&protocol=TCP&method=';
@@ -85,7 +86,7 @@ describe('bunNET http server', () => {
 
 			expect(res.status).toBe(404);
 			expect(res.headers.get('X-Powered-By')).toBe('bunNET');
-			expect(await res.text()).toBe(fillStringTemplate(notFoundPage, { method, pathname }));
+			expect(await res.text()).toBe(notFoundPage(method, pathname));
 		});
 	});
 
