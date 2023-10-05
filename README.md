@@ -1,5 +1,7 @@
 # bunNET
-
+![npm](https://img.shields.io/npm/v/bunnet)
+![npm](https://img.shields.io/npm/dt/bunnet)
+![npm](https://img.shields.io/npm/l/bunnet)\
 Developer-friendly library for building and managing powerful APIs with ease and efficiency
 
 ## Installation
