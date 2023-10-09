@@ -80,8 +80,10 @@ export class Router {
 			if (handler) return { route, params: {}, handler };
 		}
 
-		const matchedHandler = matchDynamicRoutes(methodMap, route);
-		if (matchedHandler) return matchedHandler;
+		if (route !== '') {
+			const matchedHandler = matchDynamicRoutes(methodMap, route);
+			if (matchedHandler) return matchedHandler;
+		}
 
 		throw new RouteNotFoundError();
 	}

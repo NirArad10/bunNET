@@ -7,20 +7,11 @@ import { Handler, RequestMethodType } from './utils/types';
 import { normalizeUrlPath } from './utils/utils';
 
 export const bunnet: () => BunNET = () => {
-	return BunNET.instance;
+	return new BunNET();
 };
 
 class BunNET {
-	static #instance: BunNET;
 	#router = new Router();
-
-	constructor() {
-		BunNET.#instance = this;
-	}
-
-	static get instance() {
-		return BunNET.#instance ?? (BunNET.#instance = new BunNET());
-	}
 
 	get(urlPostfix: string, handler: Handler) {
 		this.#router.get(urlPostfix, handler);
