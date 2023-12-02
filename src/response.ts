@@ -1,21 +1,22 @@
 import { file } from 'bun';
 import { notFoundPage } from './utils/utils';
-import { RequestMethodType } from './utils/types';
+import type { RequestMethodType } from './utils/types';
 
 type ResponseBody = ReadableStream | BlobPart | BlobPart[] | FormData | URLSearchParams | null;
+const xPoweredByHeader = { 'X-Powered-By': 'bunNET' };
 
 export class BunNETResponse {
 	#response?: Response;
-	#options: ResponseInit = { headers: { 'X-Powered-By': 'bunNET' } };
+	#options: ResponseInit = { headers: xPoweredByHeader };
 
 	static pageNotFound(method: RequestMethodType, pathname: string) {
-		const headers = { 'X-Powered-By': 'bunNET', 'Content-Type': 'text/html' };
+		const headers = { ...xPoweredByHeader, 'Content-Type': 'text/html' };
 
 		return new Response(notFoundPage(method, pathname), { status: 404, headers });
 	}
 
 	static serverError() {
-		const headers = { 'X-Powered-By': 'bunNET' };
+		const headers = xPoweredByHeader;
 
 		return new Response('Internal Server Error', { status: 500, headers });
 	}
@@ -60,7 +61,7 @@ export class BunNETResponse {
 		this.#response = new Response(body, this.#options);
 	}
 
-	json(body: object) {
+	json(body: any) {
 		this.#checkResponseNotSet();
 		this.#response = Response.json(body, this.#options);
 	}
@@ -69,11 +70,14 @@ export class BunNETResponse {
 		this.#checkResponseNotSet();
 
 		const bunFile = file(filePath, options);
-		if (await bunFile.exists()) this.#response = new Response(bunFile, this.#options);
-		else {
-			this.#response = BunNETResponse.serverError();
-			throw new Error(`No such file or directory '${filePath}'`);
+
+		if (await bunFile.exists()) {
+			this.#response = new Response(bunFile, this.#options);
+			return;
 		}
+
+		this.#response = BunNETResponse.serverError();
+		throw new Error(`No such file or directory '${filePath}'`);
 	}
 
 	getResponse() {

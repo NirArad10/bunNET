@@ -5,7 +5,7 @@ import {
 	RouteExistsError,
 	RouteNotFoundError
 } from './utils/errors';
-import { Handler, RequestMethodType, UrlDynamicParams } from './utils/types';
+import type { Handler, RequestMethodType, UrlDynamicParams } from './utils/types';
 import { normalizeUrlPath } from './utils/utils';
 
 type MethodMap = Map<string, Handler>;
@@ -63,10 +63,8 @@ export class Router {
 
 		if (methodMap?.has(normalizedRouteToAdd)) throw new RouteExistsError(routeToAdd, method);
 
-		if (dynamicRouteUrlPattern.test(normalizedRouteToAdd)) {
-			validateParamsNames(normalizedRouteToAdd);
-			validateRoute(methodMap, method, normalizedRouteToAdd);
-		}
+		if (dynamicRouteUrlPattern.test(normalizedRouteToAdd)) validateParamsNames(normalizedRouteToAdd);
+		if (normalizedRouteToAdd !== '') validateRoute(methodMap, method, normalizedRouteToAdd);
 
 		methodMap?.set(normalizedRouteToAdd, handlerFunction);
 	}
@@ -95,8 +93,9 @@ const validateParamsNames = (route: string): void => {
 
 	if (dynamicParams?.length !== uniqueParams.size) throw new DuplicatedDynamicParamsError(route);
 
-	for (const dynamicParam of dynamicParams as RegExpMatchArray)
+	dynamicParams.forEach((dynamicParam) => {
 		if (!dynamicParamNamePattern.test(dynamicParam)) throw new DynamicParamNameError(dynamicParam, route);
+	});
 };
 
 const validateRoute = (methodMap: MethodMap | undefined, method: RequestMethodType, route: string): void => {

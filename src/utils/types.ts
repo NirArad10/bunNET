@@ -5,6 +5,6 @@ export type RequestMethodType = 'GET' | 'HEAD' | 'POST' | 'PUT' | 'DELETE' | 'CO
 
 export type Handler = (req: BunNETRequest, res: BunNETResponse) => void | Promise<void>;
 
-export type UrlParamsObject = { [key: string]: string | string[] };
+export type UrlParamsObject = Record<string, string | string[]>;
 
-export type UrlDynamicParams = { [key: string]: string };
+export type UrlDynamicParams = Record<string, string>;

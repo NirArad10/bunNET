@@ -6,12 +6,13 @@ import {
 	readableStreamToArray,
 	readableStreamToArrayBuffer
 } from 'bun';
-import { UrlParamsObject, UrlDynamicParams } from './utils/types';
+import type { UrlParamsObject, UrlDynamicParams } from './utils/types';
 import { parseUrlParameters } from './utils/utils';
 
 const REQUEST_BODY_EMPTY_ERROR = 'Request body is empty';
+const boundaryPattern = /boundary=(.*)/;
 
-type RequestBody = ReadableStream<Uint8Array> | null;
+type RequestBody = ReadableStream | null;
 
 export class BunNETRequest {
 	#body: RequestBody;
@@ -66,7 +67,7 @@ export class BunNETRequest {
 	}
 
 	#checkBodyNull(): void {
-		if (!this.#body) throw new Error(REQUEST_BODY_EMPTY_ERROR, { cause: this.#route });
+		if (!this.#body) throw new Error(REQUEST_BODY_EMPTY_ERROR);
 	}
 
 	#validateContentType(): string {
@@ -79,7 +80,7 @@ export class BunNETRequest {
 	async text(): Promise<string> {
 		this.#checkBodyNull();
 
-		const text = readableStreamToText(this.#body as ReadableStream<Uint8Array>);
+		const text = readableStreamToText(this.#body as ReadableStream);
 		this.#consumeBody();
 
 		return text;
@@ -91,7 +92,7 @@ export class BunNETRequest {
 		const contentType = this.#validateContentType();
 		if (contentType !== 'application/json') throw new Error('Content-Type header is not valid for JSON data.');
 
-		const json = readableStreamToJSON(this.#body as ReadableStream<Uint8Array>);
+		const json = readableStreamToJSON(this.#body as ReadableStream);
 		this.#consumeBody();
 
 		return json;
@@ -105,9 +106,9 @@ export class BunNETRequest {
 		if (contentType !== 'application/x-www-form-urlencoded' && !contentType.startsWith('multipart/form-data'))
 			throw new Error('Content-Type header is not valid for form data.');
 
-		const boundary = /boundary=(.*)/.exec(contentType)?.[1];
+		const boundary = boundaryPattern.exec(contentType)?.[1];
 
-		const formData = readableStreamToFormData(this.#body as ReadableStream<Uint8Array>, boundary);
+		const formData = readableStreamToFormData(this.#body as ReadableStream, boundary);
 		this.#consumeBody();
 
 		return formData;
@@ -116,7 +117,7 @@ export class BunNETRequest {
 	async blob(): Promise<Blob> {
 		this.#checkBodyNull();
 
-		const blob = readableStreamToBlob(this.#body as ReadableStream<Uint8Array>);
+		const blob = readableStreamToBlob(this.#body as ReadableStream);
 		this.#consumeBody();
 
 		return blob;
@@ -125,7 +126,7 @@ export class BunNETRequest {
 	async array(): Promise<Uint8Array[]> {
 		this.#checkBodyNull();
 
-		const array = readableStreamToArray(this.#body as ReadableStream<Uint8Array>);
+		const array = readableStreamToArray(this.#body as ReadableStream);
 		this.#consumeBody();
 
 		return array;
@@ -134,7 +135,7 @@ export class BunNETRequest {
 	async arrayBuffer(): Promise<ArrayBuffer> {
 		this.#checkBodyNull();
 
-		const arrayBuffer = readableStreamToArrayBuffer(this.#body as ReadableStream<Uint8Array>);
+		const arrayBuffer = readableStreamToArrayBuffer(this.#body as ReadableStream);
 		this.#consumeBody();
 
 		return arrayBuffer;

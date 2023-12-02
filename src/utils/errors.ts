@@ -1,4 +1,4 @@
-import { RequestMethodType } from './types';
+import type { RequestMethodType } from './types';
 
 export class RouteNotFoundError extends Error {
 	constructor() {

@@ -2,7 +2,7 @@ import { afterAll, beforeAll, describe, expect, test } from 'bun:test';
 import bunnet from '..';
 import { notFoundPage } from '../src/utils/utils';
 import { Server } from 'bun';
-import { RequestMethodType } from '../src/utils/types';
+import type { RequestMethodType } from '../src/utils/types';
 
 const app = bunnet();
 
