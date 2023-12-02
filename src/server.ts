@@ -3,7 +3,7 @@ import { BunNETRequest } from './request';
 import { BunNETResponse } from './response';
 import { Router } from './router';
 import { RouteNotFoundError } from './utils/errors';
-import { Handler, RequestMethodType } from './utils/types';
+import type { Handler, RequestMethodType } from './utils/types';
 import { normalizeUrlPath } from './utils/utils';
 
 export const bunnet: () => BunNET = () => {

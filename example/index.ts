@@ -5,7 +5,7 @@ const app = bunnet();
 app.get('/:server', (req, res) => {
 	console.log(req.params.server);
 
-	res.sendFile('Get');
+	res.sendFile('index.ts');
 });
 
 app.head('/', (req, res) => {
