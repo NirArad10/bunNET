@@ -1,12 +1,12 @@
 import {
-	readableStreamToText,
-	readableStreamToJSON,
-	readableStreamToFormData,
-	readableStreamToBlob,
 	readableStreamToArray,
-	readableStreamToArrayBuffer
+	readableStreamToArrayBuffer,
+	readableStreamToBlob,
+	readableStreamToFormData,
+	readableStreamToJSON,
+	readableStreamToText
 } from 'bun';
-import type { UrlParamsObject, UrlDynamicParams } from './utils/types';
+import type { UrlDynamicParams, UrlParamsObject } from './utils/types';
 import { parseUrlParameters } from './utils/utils';
 
 const REQUEST_BODY_EMPTY_ERROR = 'Request body is empty';

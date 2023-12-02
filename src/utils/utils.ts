@@ -1,6 +1,6 @@
+import { normalize } from 'path';
 import type { RequestMethodType, UrlParamsObject } from './types';
 
-const consecutiveSlashesPattern = /\/+/g;
 const leadingOrTrailingSlashPattern = /^\/|\/$/g;
 
 const htmlNotFoundPagePrefix =
@@ -11,7 +11,7 @@ export const notFoundPage = (method: RequestMethodType, pathname: string) =>
 	`${htmlNotFoundPagePrefix} ${method} ${pathname}${htmlNotFoundPagePostfix}`;
 
 export const normalizeUrlPath = (path: string): string => {
-	return path.replace(consecutiveSlashesPattern, '/').replace(leadingOrTrailingSlashPattern, '');
+	return normalize(path).replace(leadingOrTrailingSlashPattern, '');
 };
 
 export const parseUrlParameters = (searchParams: URLSearchParams) => {

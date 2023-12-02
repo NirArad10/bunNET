@@ -1,3 +1,4 @@
+import { join } from 'path';
 import {
 	DuplicatedDynamicParamsError,
 	DynamicParamNameError,
@@ -9,7 +10,7 @@ import type { Handler, RequestMethodType, UrlDynamicParams } from './utils/types
 import { normalizeUrlPath } from './utils/utils';
 
 type MethodMap = Map<string, Handler>;
-type RequestsMap = Map<string, MethodMap>;
+type RequestsMap = Map<RequestMethodType, MethodMap>;
 
 type RouteHandlerInfo = { route: string; params: UrlDynamicParams; handler: Handler };
 
@@ -69,7 +70,15 @@ export class Router {
 		methodMap?.set(normalizedRouteToAdd, handlerFunction);
 	}
 
-	routeToHandler(route: string, method: string): RouteHandlerInfo {
+	addRouter(prefixRoute: string, router: Router) {
+		router.#requestsMap.forEach((methodMap, method) => {
+			methodMap.forEach((routeHandler, route) => {
+				this.#addRoute(method, join(prefixRoute, route), routeHandler);
+			});
+		});
+	}
+
+	routeToHandler(route: string, method: RequestMethodType): RouteHandlerInfo {
 		const methodMap = this.#requestsMap.get(method);
 		if (!methodMap) throw new RouteNotFoundError();
 

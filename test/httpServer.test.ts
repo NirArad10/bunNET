@@ -1,10 +1,10 @@
+import { Server } from 'bun';
 import { afterAll, beforeAll, describe, expect, test } from 'bun:test';
 import bunnet from '..';
-import { notFoundPage } from '../src/utils/utils';
-import { Server } from 'bun';
 import type { RequestMethodType } from '../src/utils/types';
+import { notFoundPage } from '../src/utils/utils';
 
-const app = bunnet();
+const app = new bunnet();
 
 app.get('/GET', (req, res) => {
 	res.json(req.query);
