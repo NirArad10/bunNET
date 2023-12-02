@@ -64,7 +64,7 @@ export class Router {
 		if (methodMap?.has(normalizedRouteToAdd)) throw new RouteExistsError(routeToAdd, method);
 
 		if (dynamicRouteUrlPattern.test(normalizedRouteToAdd)) validateParamsNames(normalizedRouteToAdd);
-		validateRoute(methodMap, method, normalizedRouteToAdd);
+		if (normalizedRouteToAdd !== '') validateRoute(methodMap, method, normalizedRouteToAdd);
 
 		methodMap?.set(normalizedRouteToAdd, handlerFunction);
 	}
