@@ -6,12 +6,12 @@ import { RouteNotFoundError } from './utils/errors';
 import type { Handler, RequestMethodType } from './utils/types';
 import { normalizeUrlPath } from './utils/utils';
 
-export const bunnet: () => BunNET = () => {
-	return new BunNET();
-};
-
 class BunNET {
 	#router = new Router();
+
+	static Router() {
+		return new Router();
+	}
 
 	get(urlPostfix: string, handler: Handler) {
 		this.#router.get(urlPostfix, handler);
@@ -49,6 +49,10 @@ class BunNET {
 		this.#router.patch(urlPostfix, handler);
 	}
 
+	addRouter(prefixRoute: string, router: Router) {
+		this.#router.addRouter(prefixRoute, router);
+	}
+
 	listen(port: number, callback?: () => void) {
 		return this.#startServer(port, callback);
 	}
@@ -66,7 +70,7 @@ class BunNET {
 				let currentRoute = normalizedRoute;
 
 				try {
-					const { route, params, handler } = router.routeToHandler(normalizedRoute, method);
+					const { route, params, handler } = router.routeToHandler(normalizedRoute, method as RequestMethodType);
 					currentRoute = route;
 
 					const req = new BunNETRequest(body, headers, normalizedRoute + search, searchParams, params, route);
@@ -91,3 +95,5 @@ class BunNET {
 		return server;
 	}
 }
+
+export default BunNET;

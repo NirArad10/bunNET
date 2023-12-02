@@ -1,3 +1,3 @@
-import { bunnet } from './src/server';
+import bunnet from './src/server';
 
 export default bunnet;

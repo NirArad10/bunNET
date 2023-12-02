@@ -10,9 +10,8 @@ const htmlNotFoundPagePostfix = '</pre></body></html>';
 export const notFoundPage = (method: RequestMethodType, pathname: string) =>
 	`${htmlNotFoundPagePrefix} ${method} ${pathname}${htmlNotFoundPagePostfix}`;
 
-export const normalizeUrlPath = (path: string): string => {
-	return path.replace(consecutiveSlashesPattern, '/').replace(leadingOrTrailingSlashPattern, '');
-};
+export const normalizeUrlPath = (path: string): string =>
+	path.replace(consecutiveSlashesPattern, '/').replace(leadingOrTrailingSlashPattern, '');
 
 export const parseUrlParameters = (searchParams: URLSearchParams) => {
 	const urlParams: UrlParamsObject = {};

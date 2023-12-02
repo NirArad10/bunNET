@@ -1,6 +1,7 @@
 import bunnet from '..';
+import { router } from './router';
 
-const app = bunnet();
+const app = new bunnet();
 
 app.get('/:server', (req, res) => {
 	console.log(req.params.server);
@@ -47,6 +48,8 @@ app.trace('/', (req, res) => {
 app.patch('/', (req, res) => {
 	res.send('Patch');
 });
+
+app.addRouter('router', router);
 
 app.listen(3000, () => {
 	console.log('listening on port 3000');

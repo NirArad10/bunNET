@@ -1,6 +1,6 @@
 import { file } from 'bun';
-import { notFoundPage } from './utils/utils';
 import type { RequestMethodType } from './utils/types';
+import { notFoundPage } from './utils/utils';
 
 type ResponseBody = ReadableStream | BlobPart | BlobPart[] | FormData | URLSearchParams | null;
 const xPoweredByHeader = { 'X-Powered-By': 'bunNET' };

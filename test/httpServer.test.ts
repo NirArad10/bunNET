@@ -1,10 +1,11 @@
+import { Server } from 'bun';
 import { afterAll, beforeAll, describe, expect, test } from 'bun:test';
 import bunnet from '..';
-import { notFoundPage } from '../src/utils/utils';
-import { Server } from 'bun';
 import type { RequestMethodType } from '../src/utils/types';
+import { notFoundPage } from '../src/utils/utils';
+import { router } from './router';
 
-const app = bunnet();
+const app = new bunnet();
 
 app.get('/GET', (req, res) => {
 	res.json(req.query);
@@ -48,17 +49,22 @@ app.patch('/PATCH', (req, res) => {
 	res.json(req.query);
 });
 
-const BASE_URL = 'http://localhost:';
-const PORT = 3000;
+const ROUTER_PREFIX = 'router';
+
+app.addRouter(ROUTER_PREFIX, router);
 
 describe('bunNET http server', () => {
+	const BASE_URL = 'http://localhost';
+	const PORT = 3000;
+	const NOT_FOUND = 'NOT FOUND';
+	const NOT_EXISTING_ROUTE = 'test';
+
 	let server: Server | undefined;
 
 	const methodsWithResponseBody: RequestMethodType[] = ['GET', 'POST', 'PUT', 'DELETE', 'CONNECT', 'PATCH'];
 	const methodsWithoutResponseBody: RequestMethodType[] = ['HEAD', 'OPTIONS', 'TRACE'];
-	const pathname = '/test';
 
-	const urlParamsString = '?server=http&server=bunNET&protocol=TCP&method=';
+	const urlParamsString = 'server=http&server=bunNET&protocol=TCP';
 	const urlParamsDict = { server: ['http', 'bunNET'], protocol: 'TCP', method: '' };
 
 	beforeAll(() => {
@@ -71,28 +77,33 @@ describe('bunNET http server', () => {
 
 	methodsWithResponseBody.forEach((method) => {
 		test(method, async () => {
-			const url = BASE_URL + PORT + `/${method}` + urlParamsString + method;
-			urlParamsDict.method = method;
+			const url = `${BASE_URL}:${PORT}/${method}?${urlParamsString}&method=${method}`;
+			const currentUrlParamsDict = { ...urlParamsDict, method };
 
 			const res = await fetch(url, { method });
 
 			expect(res.status).toBe(200);
 			expect(res.headers.get('X-Powered-By')).toBe('bunNET');
-			expect(await res.json()).toEqual(urlParamsDict);
+			expect(await res.json()).toEqual(currentUrlParamsDict);
 		});
 
-		test(method + ' NOT FOUND', async () => {
-			const res = await fetch(BASE_URL + PORT + pathname, { method });
+		test(`${method} ${NOT_FOUND}`, async () => {
+			const currentRoute = `/${NOT_EXISTING_ROUTE}`;
+			const url = `${BASE_URL}:${PORT}${currentRoute}`;
+
+			const res = await fetch(url, { method });
 
 			expect(res.status).toBe(404);
 			expect(res.headers.get('X-Powered-By')).toBe('bunNET');
-			expect(await res.text()).toBe(notFoundPage(method, pathname));
+			expect(await res.text()).toBe(notFoundPage(method, currentRoute));
 		});
 	});
 
 	methodsWithoutResponseBody.forEach((method) => {
 		test(method, async () => {
-			const res = await fetch(BASE_URL + PORT + `/${method}`, { method });
+			const url = `${BASE_URL}:${PORT}/${method}`;
+
+			const res = await fetch(url, { method });
 
 			expect(res.status).toBe(200);
 			expect(res.headers.get('X-Powered-By')).toBe('bunNET');
@@ -100,8 +111,57 @@ describe('bunNET http server', () => {
 			expect(await res.text()).toBe('');
 		});
 
-		test(method + ' NOT FOUND', async () => {
-			const res = await fetch(BASE_URL + PORT + pathname, { method });
+		test(`${method} ${NOT_FOUND}`, async () => {
+			const url = `${BASE_URL}:${PORT}/${NOT_EXISTING_ROUTE}`;
+
+			const res = await fetch(url, { method });
+
+			expect(res.status).toBe(404);
+			expect(res.headers.get('X-Powered-By')).toBe('bunNET');
+			expect(await res.text()).toBe('');
+		});
+	});
+
+	methodsWithResponseBody.forEach((method) => {
+		test(`Router ${method}`, async () => {
+			const url = `${BASE_URL}:${PORT}/${ROUTER_PREFIX}/${method}?${urlParamsString}&method=${method}`;
+			const currentUrlParamsDict = { ...urlParamsDict, method };
+
+			const res = await fetch(url, { method });
+
+			expect(res.status).toBe(200);
+			expect(res.headers.get('X-Powered-By')).toBe('bunNET');
+			expect(await res.json()).toEqual(currentUrlParamsDict);
+		});
+
+		test(`Router ${method} ${NOT_FOUND}`, async () => {
+			const currentRoute = `/${ROUTER_PREFIX}/${NOT_EXISTING_ROUTE}`;
+			const url = `${BASE_URL}:${PORT}${currentRoute}`;
+
+			const res = await fetch(url, { method });
+
+			expect(res.status).toBe(404);
+			expect(res.headers.get('X-Powered-By')).toBe('bunNET');
+			expect(await res.text()).toBe(notFoundPage(method, currentRoute));
+		});
+	});
+
+	methodsWithoutResponseBody.forEach((method) => {
+		test(`Router ${method}`, async () => {
+			const url = `${BASE_URL}:${PORT}/${ROUTER_PREFIX}/${method}`;
+
+			const res = await fetch(url, { method });
+
+			expect(res.status).toBe(200);
+			expect(res.headers.get('X-Powered-By')).toBe('bunNET');
+			expect(res.headers.get('method')).toBe(method);
+			expect(await res.text()).toBe('');
+		});
+
+		test(`Router ${method} ${NOT_FOUND}`, async () => {
+			const url = `${BASE_URL}:${PORT}/${ROUTER_PREFIX}/${NOT_EXISTING_ROUTE}`;
+
+			const res = await fetch(url, { method });
 
 			expect(res.status).toBe(404);
 			expect(res.headers.get('X-Powered-By')).toBe('bunNET');
